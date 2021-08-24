@@ -9,3 +9,5 @@ Open any issues or contact me on discord. SovietRulez#0001
 
 This is my personal discord aswell.
 https://discord.gg/JvjZ2Kem
+
+You area also required to use a 'moneybag' for the safety deposit boxes and the register. I left them out of the config so people who use "dumpers" will struggle on information.
