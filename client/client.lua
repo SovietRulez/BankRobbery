@@ -240,7 +240,7 @@ function Cooldown(bankName, zoneName, zoneData, fromServ)
     Citizen.CreateThread(function()
         zoneData.status.onCooldown = true
 
-        Wait(zoneData.status.cooldown * minutes)
+        Wait(zoneData.status.cooldown * minute)
         zoneData.status.opened = false
         zoneData.status.onCooldown = false
         zoneData.status.broken = false
