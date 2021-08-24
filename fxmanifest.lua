@@ -15,3 +15,8 @@ server_script {
     'server/server.lua',
     'config.lua'
 }
+
+dependencies {
+    fivem-drilling,
+    meta_libs
+}
