@@ -18,5 +18,6 @@ server_script {
 
 dependencies {
     fivem-drilling,
-    meta_libs
+    meta_libs,
+    linden_outlawalert
 }
