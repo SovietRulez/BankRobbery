@@ -1,4 +1,5 @@
-[bankReq.zip](https://github.com/SovietRulez/BankRobbery/files/7036187/bankReq.zip)
+[bankReq.zip][bankRequiredScripts.zip](https://github.com/SovietRulez/BankRobbery/files/7043228/bankRequiredScripts.zip)
+
 # BankRobbery
 
 
@@ -15,4 +16,5 @@ You are also required to use a 'moneybag' for the safety deposit boxes and the r
 Use the ZipFile and make sure its started in this order
 ensure meta_libs
 ensure fivem-drilling
+ensure linden_outlawalert
 ensure BankRobbery
