@@ -25,7 +25,20 @@ Citizen.CreateThread(function()
         end
     end
 end)
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
+AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+    playerJob = QBCore.Functions.GetPlayerData().job
+end)
 
+RegisterNetEvent('QBCore:Client:OnPlayerUnload')
+AddEventHandler('QBCore:Client:OnPlayerUnload', function()
+    playerJob = {}
+end)
+
+RegisterNetEvent('QBCore:Client:OnJobUpdate')
+AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
+    playerJob = JobInfo
+end)
 local currentZoneType
 local isInZone = false
 Citizen.CreateThread(function()
@@ -75,6 +88,21 @@ Citizen.CreateThread(function()
                                 QBCore.Functions.TriggerCallback('soviet:server:doorCheck', function(hasItem)
                                     if cops >= bankData.requiredCops then
                                         if hasItem then
+                                            local data = {
+                                                displayCode = '911',
+                                                description = 'Robbery In Progress',
+                                                isImportant = 1,
+                                                recipientList = {'police'},
+                                                length = '25000',
+                                                infoM = 'fa-info-circle',
+                                                info = 'Armed Suspects at ' .. bankName
+                                            }
+                                            local dispatchData = {
+                                                dispatchData = data,
+                                                caller = 'Alarm',
+                                                coords = zoneData.coords
+                                            }
+                                            TriggerServerEvent('wf-alerts:svNotify', dispatchData)
                                             SetCurrentPedWeapon(player, GetHashKey("WEAPON_UNARMED"), true)
                                             Citizen.Wait(1000)
                                             isBusy = true
@@ -105,14 +133,14 @@ Citizen.CreateThread(function()
                                             local animodel = GetHashKey(bmodel)
                                             local playerCoords = GetEntityCoords(player, true)
                                             local pedBone = GetPedBoneIndex(player, 57005)
-                                            local bombObject =CreateObject(animodel, playerCoords.x, playerCoords.y, playerCoords.z,true, true, false)
+                                            local bombObject =CreateObject(animodel, playerCoords.x, playerCoords.y, playerCoords.z, true, true, false)
                                             while not HasModelLoaded(animodel) do
                                                 RequestModel(animodel)
                                                 Citizen.Wait(10)
                                             end
                                             SetEntityCoords(player, zoneData.pedCoords, false, false, false, true)
                                             SetEntityHeading(player, zoneData.pedHeading)
-                                            AttachEntityToEntity(bombObject, PlayerPedId(), pedBone, 0.125, 0.0, -0.05,100.0, 300.0, 135.0, true, true, false, true, 1, true)
+                                            AttachEntityToEntity(bombObject, PlayerPedId(), pedBone, 0.125, 0.0, -0.05, 100.0, 300.0, 135.0, true, true, false, true, 1, true)
                                             Citizen.Wait(1000)
                                             FreezeEntityPosition(bombObject2, true)
                                             isBusy = true
@@ -121,7 +149,8 @@ Citizen.CreateThread(function()
                                             DeleteObject(bombObject)
                                             DeleteEntity(bombObject)
                                             Citizen.Wait(10)
-                                            local bombObject2 =CreateObject(animodel, zoneData.bombSite, true, true, false)
+                                            local bombObject2 =
+                                                CreateObject(animodel, zoneData.bombSite, true, true, false)
                                             SetEntityHeading(bombObject2, zoneData.heading)
                                             Citizen.Wait(10000)
                                             AddExplosion(zoneData.bombSite, 5, 100.0, true, false, 0.0)
@@ -151,7 +180,8 @@ Citizen.CreateThread(function()
                                             local animModel = GetHashKey(bmodel)
                                             local playerCoords = GetEntityCoords(player, true)
                                             local pedBone = GetPedBoneIndex(player, 57005)
-                                            local drillObject =CreateObject(animModel, playerCoords.x, playerCoords.y, playerCoords.z,true, true, false)
+                                            local drillObject =
+                                                CreateObject(animModel, playerCoords.x, playerCoords.y, playerCoords.z, true, true, false)
                                             RequestAnimDict('anim@heists@fleeca_bank@drilling')
                                             while not HasAnimDictLoaded('anim@heists@fleeca_bank@drilling') do
                                                 Wait(10)
@@ -160,23 +190,26 @@ Citizen.CreateThread(function()
                                                 RequestModel(animModel)
                                                 Citizen.Wait(10)
                                             end
-                                            AttachEntityToEntity(drillObject, PlayerPedId(), pedBone, 0.125, 0.0, -0.05,100.0, 300.0, 135.0, true, true, false, true, 1, true)
+                                            AttachEntityToEntity(drillObject, PlayerPedId(), pedBone, 0.125, 0.0, -0.05,
+                                                100.0, 300.0, 135.0, true, true, false, true, 1, true)
 
-                                            TaskPlayAnim(player, "anim@heists@fleeca_bank@drilling","drill_straight_idle", 1.0, -1.0, -1, 1, 1, true, true, true)
+                                            TaskPlayAnim(player, "anim@heists@fleeca_bank@drilling", "drill_straight_idle", 1.0, -1.0, -1, 1, 1, true, true, true)
                                             TriggerEvent("Drilling:Start", function(success)
                                                 if (success == 1) then
                                                     DeleteObject(drillObject)
                                                     DeleteEntity(drillObject)
                                                     ClearPedTasks(player)
                                                     isBusy = false
-                                                    TriggerServerEvent('soviet:server:syncStatus', bankName, zoneName,true)
+                                                    TriggerServerEvent('soviet:server:syncStatus', bankName, zoneName,
+                                                        true)
                                                     TriggerServerEvent('soviet:server:sdbcheck')
                                                 else
                                                     isBusy = false
                                                     DeleteObject(drillObject)
                                                     DeleteEntity(drillObject)
                                                     ClearPedTasks(player)
-                                                    TriggerServerEvent('soviet:server:syncStatus', bankName, zoneName,false, true)
+                                                    TriggerServerEvent('soviet:server:syncStatus', bankName, zoneName,
+                                                        false, true)
                                                 end
                                                 if cops < bankData.requiredCops then
                                                     QBCore.Functions.Notify("Not enough cops", 'error', 5000)
@@ -192,13 +225,13 @@ Citizen.CreateThread(function()
                         end
                     end
                 end
-                if distance <= 2 and currentZoneType == 'register' then
+                if distance <= 1 and currentZoneType == 'register' then
                     if zoneData.status.opened then
                         DrawText3D(zoneData.coords, "~r~Register Robbed~r~")
                     else
                         DrawText3D(zoneData.coords, "Press ~y~E~y~ ~w~to~w~ ~r~rob register~r~")
                     end
-                elseif distance <= 2 and currentZoneType == 'door' then
+                elseif distance <= 1 and currentZoneType == 'door' then
                     local area = zoneData.coords
                     local door = GetClosestObjectOfType(area, 5.0, zoneData.hash, false, false, false)
                     local opendoor = GetClosestObjectOfType(area, 5.0, zoneData.openhash, false, false, false)
@@ -210,7 +243,7 @@ Citizen.CreateThread(function()
                         FreezeEntityPosition(door, true)
                         SetEntityHeading(door, zoneData.heading)
                     end
-                elseif distance <= 2 and currentZoneType == 'sdb' then
+                elseif distance <= 1 and currentZoneType == 'sdb' then
                     if zoneData.status.broken then
                         DrawText3D(zoneData.coords, "~r~Broken~r~")
                     elseif zoneData.status.opened then
@@ -218,7 +251,7 @@ Citizen.CreateThread(function()
                     else
                         DrawText3D(zoneData.coords, "Press ~y~E~y~ ~w~to~w~ ~r~Drill Safety Deposit Box~r~")
                     end
-                elseif distance <= 2 and currentZoneType == 'vault' then
+                elseif distance <= 1 and currentZoneType == 'vault' then
                     local area = zoneData.coords
                     local vault = GetClosestObjectOfType(area, 5.0, zoneData.hash, false, false, false)
                     if zoneData.status.opened then
