@@ -162,7 +162,7 @@ Citizen.CreateThread(function()
                                             DeleteEntity(bombObject)
                                         end
                                     end
-                                end, Config.DoorItem)
+                                end, Config.vaultItem)
                             end)
                         end
                     elseif currentZoneType == 'sdb' then
@@ -214,7 +214,7 @@ Citizen.CreateThread(function()
                                                 if cops < bankData.requiredCops then
                                                     QBCore.Functions.Notify("Not enough cops", 'error', 5000)
                                                 end
-                                            end, Config.DoorItem)
+                                            end, Config.SDBItem)
                                         end
                                     end
                                     if cops < bankData.requiredCops then
